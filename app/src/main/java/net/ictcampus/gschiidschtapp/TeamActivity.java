@@ -2,13 +2,10 @@ package net.ictcampus.gschiidschtapp;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.provider.ContactsContract;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.SubMenu;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -17,10 +14,23 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.github.mikephil.charting.charts.HorizontalBarChart;
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.Description;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
+import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
+import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -32,8 +42,6 @@ import com.google.firebase.database.ValueEventListener;
 import net.ictcampus.gschiidschtapp.model.Team;
 import net.ictcampus.gschiidschtapp.model.User;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 
 public class TeamActivity extends AppCompatActivity
@@ -44,6 +52,9 @@ public class TeamActivity extends AppCompatActivity
     private ArrayList<User> users = new ArrayList<>();
     private Team selectedTeam;
     private DatabaseReference usersRef;
+
+    protected HorizontalBarChart overallChart;
+    protected LineChart lastSixMonthsChart;
 
 
     @Override
@@ -228,8 +239,7 @@ public class TeamActivity extends AppCompatActivity
         } else if (item.getGroupId() == R.id.teamGroup) {
             selectedTeam = teams.get(item.getItemId());
             loadTeamFromDatabase();
-        }
-        if (id == R.id.nav_settings) {
+        } else if (id == R.id.nav_settings) {
             //TODO: INTENT To SEttings Acitivity;
         } else if (id == R.id.nav_logout) {
 
@@ -243,6 +253,9 @@ public class TeamActivity extends AppCompatActivity
 
             //end intent
             finishAffinity();
+        } else if (id == R.id.nav_info){
+            Intent infoIntent = new Intent(this, InfoActivity.class);
+            startActivity(infoIntent);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -261,10 +274,130 @@ public class TeamActivity extends AppCompatActivity
                 teamElected.setText(R.string.teamCurrentElected);
             }
 
-
-
+            createOverallGraph();
+            createLastSixMonthsGraph();
 
         }
+    }
+
+    private void createOverallGraph(){
+
+        overallChart = (HorizontalBarChart)findViewById(R.id.overall_graph);
+        overallChart.getLegend().setEnabled(false);
+        overallChart.setScaleEnabled(false);
+
+        Description description = overallChart.getDescription();
+        //TODO: move this string to res values
+        description.setText("overall number of times a user got elected");
+        description.setTextSize(12);
+        description.setTextColor(R.color.colorPrimaryDark);
+
+
+        XAxis xAxis = overallChart.getXAxis();
+        xAxis.setEnabled(true);
+        xAxis.setDrawLabels(true);
+        xAxis.setDrawAxisLine(true);
+        xAxis.setDrawGridLines(false);
+        xAxis.setGranularityEnabled(true);
+        xAxis.setGranularity(1);
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+
+
+        YAxis leftYAxis = overallChart.getAxisLeft();
+        leftYAxis.setEnabled(true);
+        YAxis rightYAxis = overallChart.getAxisRight();
+        rightYAxis.setEnabled(false);
+
+
+        ArrayList<BarEntry> barEntries = new ArrayList<>();
+        barEntries.add(new BarEntry(0f,23));
+        barEntries.add(new BarEntry(1f,22));
+        barEntries.add(new BarEntry(2f,37));
+        barEntries.add(new BarEntry(3f,15));
+        barEntries.add(new BarEntry(4f,16));
+        barEntries.add(new BarEntry(5f,27));
+        barEntries.add(new BarEntry(6f,63));
+        BarDataSet barDataSet = new BarDataSet(barEntries, "times chosen");
+        barDataSet.setColors(ColorTemplate.MATERIAL_COLORS);
+
+        final String[] users = new String[] {"Rino", "Basil", "Robin", "Silas", "Jonas", "Kirstin", "Yanick", "Test"};
+        xAxis.setValueFormatter(new IndexAxisValueFormatter(users));
+
+        ArrayList<IBarDataSet> dataSets = new ArrayList<>();
+        dataSets.add(barDataSet);
+
+
+        BarData overallData = new BarData(dataSets);
+        overallChart.setData(overallData);
+        overallChart.setFitBars(true);
+
+
+    }
+
+
+    private void createLastSixMonthsGraph(){
+        lastSixMonthsChart = (LineChart) findViewById(R.id.last_six_months_graph);
+        lastSixMonthsChart.setScaleEnabled(false);
+
+        Description description = lastSixMonthsChart.getDescription();
+        //TODO: move this string to res values
+        description.setText("changes in last six months' votes");
+        description.setTextSize(12);
+        description.setTextColor(R.color.colorPrimaryDark);
+
+        XAxis xAxis = lastSixMonthsChart.getXAxis();
+        xAxis.setEnabled(false);
+
+        YAxis leftYAxis = lastSixMonthsChart.getAxisLeft();
+        leftYAxis.setDrawAxisLine(false);
+        leftYAxis.setDrawGridLines(true);
+
+        YAxis rightYAxis = lastSixMonthsChart.getAxisRight();
+        rightYAxis.setEnabled(false);
+
+        ArrayList<Entry> yAxisBasil = new ArrayList<>();
+        ArrayList<Entry> yAxisRino = new ArrayList<>();
+        ArrayList<Entry> yAxisRobin = new ArrayList<>();
+
+        yAxisBasil.add(new Entry(1f, 12f));
+        yAxisBasil.add(new Entry(2f, 5f));
+        yAxisBasil.add(new Entry(3f, 3f));
+        yAxisBasil.add(new Entry(4f, 4f));
+
+        yAxisRino.add(new Entry(1f, 1f));
+        yAxisRino.add(new Entry(2f, 12f));
+        yAxisRino.add(new Entry(3f, 39f));
+        yAxisRino.add(new Entry(4f, 4f));
+
+        yAxisRobin.add(new Entry(1f, 5f));
+        yAxisRobin.add(new Entry(2f, 13f));
+        yAxisRobin.add(new Entry(3f, 0f));
+        yAxisRobin.add(new Entry(4f, 11f));
+
+        LineDataSet lineDataSet1 = new LineDataSet(yAxisBasil, "Basil");
+        lineDataSet1.setDrawCircles(false);
+        lineDataSet1.setDrawValues(false);
+        lineDataSet1.setColor(Color.BLUE);
+
+        LineDataSet lineDataSet2 = new LineDataSet(yAxisRino, "Rino");
+        lineDataSet2.setDrawCircles(false);
+        lineDataSet2.setDrawValues(false);
+        lineDataSet2.setColor(Color.RED);
+
+        LineDataSet lineDataSet3 = new LineDataSet(yAxisRobin, "Robin");
+        lineDataSet3.setDrawCircles(false);
+        lineDataSet3.setDrawValues(false);
+        lineDataSet3.setColor(Color.GREEN);
+
+        ArrayList<ILineDataSet> dataSets = new ArrayList<>();
+        dataSets.add(lineDataSet1);
+        dataSets.add(lineDataSet2);
+        dataSets.add(lineDataSet3);
+
+
+        LineData lastSixMonthsData = new LineData(dataSets);
+        lastSixMonthsChart.setData(lastSixMonthsData);
+        lastSixMonthsChart.invalidate();
     }
 
     private void attachNewElectedListenerOnSelectedTeam() {

@@ -16,4 +16,5 @@
     <string name="missing_regsistration_name">Please insert a name!</string>
     <string name="notequal_regsistration_email">Email adresses must be equal</string>
     <string name="logout">Sign out</string>
+    <string name="info">Information</string>
 </resources>

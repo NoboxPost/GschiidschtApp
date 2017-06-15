@@ -38,7 +38,8 @@
     <string name="createTeamNameEmpty">Please enter a name</string>
     <string name="db_teams">teams</string>
     <string name="db_user_teams">teams</string>
-    <string name="teamTeamname" >Team Di Gschiidschtä</string>
+    <string name="teamTeamname">Team Di Gschiidschtä</string>
     <string name="teamCurrentElected">Nobody is elected</string>
     <string name="teamCurrentElectionButton">Elect Now!</string>
+    <string name="info">Information</string>
 </resources>
