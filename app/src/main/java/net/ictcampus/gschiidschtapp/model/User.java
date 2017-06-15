@@ -1,6 +1,7 @@
 package net.ictcampus.gschiidschtapp.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 /**
  * Created by vanonir on 09.06.2017.
@@ -8,20 +9,19 @@ import java.io.Serializable;
 
 public class User implements Serializable {
 
-    private String email;
-    private String displayName;
-    private String uid;
+    String email;
+    String name;
+    ArrayList<String> teams;
+    String uid;
 
     public User() {
     }
 
-
-    public boolean checkIfHasAllProperties(){
-        if (email !=null&&displayName!=null&&uid!=null){
-            return true;
-        }else {
-            return false;
-        }
+    public User(String email, String name, ArrayList<String> teams, String uid) {
+        this.email = email;
+        this.name = name;
+        this.teams = teams;
+        this.uid = uid;
     }
 
     public String getEmail() {
@@ -32,12 +32,20 @@ public class User implements Serializable {
         this.email = email;
     }
 
-    public String getDisplayName() {
-        return displayName;
+    public String getName() {
+        return name;
     }
 
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public ArrayList<String> getTeams() {
+        return teams;
+    }
+
+    public void setTeams(ArrayList<String> teams) {
+        this.teams = teams;
     }
 
     public String getUid() {
@@ -47,5 +55,4 @@ public class User implements Serializable {
     public void setUid(String uid) {
         this.uid = uid;
     }
-
 }

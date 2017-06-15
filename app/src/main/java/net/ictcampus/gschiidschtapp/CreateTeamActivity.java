@@ -1,6 +1,7 @@
 package net.ictcampus.gschiidschtapp;
 
 import android.content.SharedPreferences;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -10,6 +11,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -43,7 +46,6 @@ public class CreateTeamActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(),R.string.createTeamNameEmpty,Toast.LENGTH_SHORT).show();
                 }else {
                     createNewTeam(teamNameField.getText().toString());
-                    finish();
                 }
 
             }
@@ -58,23 +60,29 @@ public class CreateTeamActivity extends AppCompatActivity {
         String teamID = teamsRef.push().getKey();
         Team team = new Team(teamID,teamName,uid);
         teamsRef.child(teamID).setValue(team);
-
         addTeamIdToUser(teamID);
+
     }
 
     private void addTeamIdToUser(final String teamID) {
         final DatabaseReference userRef= FirebaseDatabase.getInstance().getReference(getString(R.string.db_users)).child(FirebaseAuth.getInstance().getCurrentUser().getUid().toString());
+        final OnCompleteListener onCompleteListener =new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                finish();
+            }
+        };
         userRef.child(getString(R.string.db_user_teams)).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()){
                     ArrayList<String> teamsList =(ArrayList<String>) dataSnapshot.getValue();
                     teamsList.add(teamID);
-                    userRef.child(getString(R.string.db_user_teams)).setValue(teamsList);
+                    userRef.child(getString(R.string.db_user_teams)).setValue(teamsList).addOnCompleteListener(onCompleteListener);
                 }else {
                     ArrayList<String> teamsList = new ArrayList<String>();
                     teamsList.add(teamID);
-                    userRef.child(getString(R.string.db_user_teams)).setValue(teamsList);
+                    userRef.child(getString(R.string.db_user_teams)).setValue(teamsList).addOnCompleteListener(onCompleteListener);
                 }
             }
 
