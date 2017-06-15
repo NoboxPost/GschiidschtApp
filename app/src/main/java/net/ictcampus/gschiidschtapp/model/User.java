@@ -24,6 +24,11 @@ public class User implements Serializable {
         this.uid = uid;
     }
 
+    @Override
+    public String toString() {
+        return name+" "+email;
+    }
+
     public String getEmail() {
         return email;
     }

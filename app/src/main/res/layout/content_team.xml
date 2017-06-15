@@ -51,7 +51,7 @@
             android:layout_marginRight="24dp"
             app:layout_constraintBottom_toTopOf="@+id/teamCurrentElected"
             app:layout_constraintRight_toRightOf="@+id/teamCurrentElected"
-            app:srcCompat="@drawable/ic_crow" />
+            app:srcCompat="@drawable/ic_crown" />
 
         <Button
             android:id="@+id/teamCurrentEletionButton"
@@ -79,14 +79,16 @@
             android:layout_marginRight="8dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="32dp"
+            android:scrollbars="none"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/teamCurrentEletionButton" />
 
+
         <com.github.mikephil.charting.charts.HorizontalBarChart
             android:id="@+id/overall_graph"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="300dp"
             android:layout_marginEnd="8dp"
             android:layout_marginLeft="8dp"
@@ -94,7 +96,8 @@
             android:layout_marginTop="16dp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/last_six_months_graph"></com.github.mikephil.charting.charts.HorizontalBarChart>
+            app:layout_constraintTop_toBottomOf="@+id/last_six_months_graph"
+            android:layout_marginStart="8dp"></com.github.mikephil.charting.charts.HorizontalBarChart>
 
         <com.github.mikephil.charting.charts.LineChart
             android:id="@+id/last_six_months_graph"
@@ -102,7 +105,7 @@
             android:layout_height="300dp"
             android:layout_marginEnd="16dp"
             android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
+            android:layout_marginRight="16dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="32dp"
             app:layout_constraintHorizontal_bias="0.0"

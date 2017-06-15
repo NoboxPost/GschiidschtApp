@@ -42,4 +42,5 @@
     <string name="teamCurrentElected">Nobody is elected</string>
     <string name="teamCurrentElectionButton">Elect Now!</string>
     <string name="info">Information</string>
+    <string name="db_team_currentElected">currentElected</string>
 </resources>

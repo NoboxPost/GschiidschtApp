@@ -1,10 +1,14 @@
 package net.ictcampus.gschiidschtapp;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.SubMenu;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -14,6 +18,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.HorizontalBarChart;
@@ -31,6 +41,8 @@ import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -52,6 +64,7 @@ public class TeamActivity extends AppCompatActivity
     private ArrayList<User> users = new ArrayList<>();
     private Team selectedTeam;
     private DatabaseReference usersRef;
+    private ArrayAdapter<User> userArrayAdapter;
 
     protected HorizontalBarChart overallChart;
     protected LineChart lastSixMonthsChart;
@@ -63,7 +76,6 @@ public class TeamActivity extends AppCompatActivity
         setContentView(R.layout.activity_team);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
 
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -78,14 +90,20 @@ public class TeamActivity extends AppCompatActivity
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
             finish();
         }
-        //addAllTeamsWithUserAsNavLinks();
+        //addAllTeamsContainingUserAsNavLinks();
 
+
+        userArrayAdapter = new ArrayAdapter<User>(this, android.R.layout.simple_list_item_1,users);
+
+        ListView userListView = (ListView) findViewById(R.id.teamMemberList);
+        userListView.setAdapter(userArrayAdapter);
+        attachUserListViewClickHandler();
 
 //        Toast.makeText(getApplicationContext(),FirebaseAuth.getInstance().getCurrentUser().getDisplayName(),Toast.LENGTH_LONG).show();
 
     }
 
-    private void addAllTeamsWithUserAsNavLinks() {
+    private void addAllTeamsContainingUserAsNavLinks() {
         //Add All Teams with currentUser as member;
         final ArrayList<String> teamIds = new ArrayList<>();
 
@@ -118,17 +136,17 @@ public class TeamActivity extends AppCompatActivity
             teamsRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    if (dataSnapshot.exists()){
-                        Log.d(TAG,"recieved some Teams");
+                    if (dataSnapshot.exists()) {
+                        Log.d(TAG, "recieved some Teams");
                         teams.clear();
                         for (DataSnapshot child : dataSnapshot.getChildren()) {
-                            if (teamIds.contains(child.getKey().toString())){
-                                teams.add((Team)child.getValue(Team.class));
+                            if (teamIds.contains(child.getKey().toString())) {
+                                teams.add((Team) child.getValue(Team.class));
                             }
                         }
                         addTeamsToNav();
-                    }else {
-                        Log.d(TAG,"didnt receive Teams");
+                    } else {
+                        Log.d(TAG, "didnt receive Teams");
                     }
                 }
 
@@ -141,14 +159,14 @@ public class TeamActivity extends AppCompatActivity
     }
 
     private void addTeamsToNav() {
-        if (!teams.isEmpty()){
+        if (!teams.isEmpty()) {
             //get submenu to add all teams;
             NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
             SubMenu subMenu = navigationView.getMenu().getItem(0).getSubMenu();
             subMenu.clear();
-            subMenu.add(R.id.teamGroup,R.id.createTeam,Menu.NONE,R.string.createTeam).setCheckable(false).setIcon(R.drawable.ic_menu_add_team);
-            for (int i  = 0 ; i< teams.size();i++){
-                subMenu.add(R.id.teamGroup,i,Menu.NONE,teams.get(i).getTeamName()).setCheckable(true);
+            subMenu.add(R.id.teamGroup, R.id.createTeam, Menu.NONE, R.string.createTeam).setCheckable(false).setIcon(R.drawable.ic_menu_add_team);
+            for (int i = 0; i < teams.size(); i++) {
+                subMenu.add(R.id.teamGroup, i, Menu.NONE, teams.get(i).getTeamName()).setCheckable(true);
             }
         }
     }
@@ -157,8 +175,12 @@ public class TeamActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
         usersRef = FirebaseDatabase.getInstance().getReference(getString(R.string.db_users));
+        userArrayAdapter = new ArrayAdapter<User>(this, android.R.layout.simple_list_item_1,users);
+        ListView userListView = (ListView) findViewById(R.id.teamMemberList);
+        userListView.setAdapter(userArrayAdapter);
+        attachUserListViewClickHandler();
         loadAndDisplayUsernameAndUserEmailInNavMenu();
-        addAllTeamsWithUserAsNavLinks();
+        addAllTeamsContainingUserAsNavLinks();
 
     }
 
@@ -253,7 +275,7 @@ public class TeamActivity extends AppCompatActivity
 
             //end intent
             finishAffinity();
-        } else if (id == R.id.nav_info){
+        } else if (id == R.id.nav_info) {
             Intent infoIntent = new Intent(this, InfoActivity.class);
             startActivity(infoIntent);
         }
@@ -264,12 +286,25 @@ public class TeamActivity extends AppCompatActivity
     }
 
     private void refreshTeamContent() {
-        if (selectedTeam!=null) {
+        if (selectedTeam != null) {
             TextView teamName = (TextView) findViewById(R.id.teamTeamname);
             teamName.setText(selectedTeam.getTeamName());
-            TextView teamElected = (TextView) findViewById(R.id.teamCurrentElected);
+            final TextView teamElected = (TextView) findViewById(R.id.teamCurrentElected);
             if (selectedTeam.getCurrentElected() != null) {
-                teamElected.setText(selectedTeam.getCurrentElected());
+                usersRef.child(selectedTeam.getCurrentElected()).child(getString(R.string.db_user_name)).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Log.d(TAG,"Username for Elected from DB :"+dataSnapshot.toString());
+                        if (dataSnapshot.exists()){
+                            teamElected.setText(dataSnapshot.getValue().toString());
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
             } else {
                 teamElected.setText(R.string.teamCurrentElected);
             }
@@ -280,9 +315,9 @@ public class TeamActivity extends AppCompatActivity
         }
     }
 
-    private void createOverallGraph(){
+    private void createOverallGraph() {
 
-        overallChart = (HorizontalBarChart)findViewById(R.id.overall_graph);
+        overallChart = (HorizontalBarChart) findViewById(R.id.overall_graph);
         overallChart.getLegend().setEnabled(false);
         overallChart.setScaleEnabled(false);
 
@@ -310,17 +345,17 @@ public class TeamActivity extends AppCompatActivity
 
 
         ArrayList<BarEntry> barEntries = new ArrayList<>();
-        barEntries.add(new BarEntry(0f,23));
-        barEntries.add(new BarEntry(1f,22));
-        barEntries.add(new BarEntry(2f,37));
-        barEntries.add(new BarEntry(3f,15));
-        barEntries.add(new BarEntry(4f,16));
-        barEntries.add(new BarEntry(5f,27));
-        barEntries.add(new BarEntry(6f,63));
+        barEntries.add(new BarEntry(0f, 23));
+        barEntries.add(new BarEntry(1f, 22));
+        barEntries.add(new BarEntry(2f, 37));
+        barEntries.add(new BarEntry(3f, 15));
+        barEntries.add(new BarEntry(4f, 16));
+        barEntries.add(new BarEntry(5f, 27));
+        barEntries.add(new BarEntry(6f, 63));
         BarDataSet barDataSet = new BarDataSet(barEntries, "times chosen");
         barDataSet.setColors(ColorTemplate.MATERIAL_COLORS);
 
-        final String[] users = new String[] {"Rino", "Basil", "Robin", "Silas", "Jonas", "Kirstin", "Yanick", "Test"};
+        final String[] users = new String[]{"Rino", "Basil", "Robin", "Silas", "Jonas", "Kirstin", "Yanick", "Test"};
         xAxis.setValueFormatter(new IndexAxisValueFormatter(users));
 
         ArrayList<IBarDataSet> dataSets = new ArrayList<>();
@@ -335,7 +370,7 @@ public class TeamActivity extends AppCompatActivity
     }
 
 
-    private void createLastSixMonthsGraph(){
+    private void createLastSixMonthsGraph() {
         lastSixMonthsChart = (LineChart) findViewById(R.id.last_six_months_graph);
         lastSixMonthsChart.setScaleEnabled(false);
 
@@ -398,16 +433,20 @@ public class TeamActivity extends AppCompatActivity
         LineData lastSixMonthsData = new LineData(dataSets);
         lastSixMonthsChart.setData(lastSixMonthsData);
         lastSixMonthsChart.invalidate();
+
     }
+
 
     private void attachNewElectedListenerOnSelectedTeam() {
         DatabaseReference selectedTeamDBRef = selectedTeam.getTeamDBRef(getString(R.string.db_teams)).child("currentElected");
         selectedTeamDBRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.d(TAG,"refreshedTeam "+selectedTeam.getTeamName()+" got new elected: "+dataSnapshot.toString());
-                loadTeamFromDatabase();
-                refreshTeamContent();
+                Log.d(TAG, "refreshedTeam " + selectedTeam.getTeamName() + " got new elected: " + dataSnapshot.toString());
+                if (selectedTeam.getCurrentElected()!=null&&(!dataSnapshot.getValue().toString().equals(selectedTeam.getCurrentElected()))){
+                    loadTeamFromDatabase();
+                }
+
             }
 
             @Override
@@ -416,7 +455,8 @@ public class TeamActivity extends AppCompatActivity
             }
         });
     }
-    private void attachChildChangeListenerForSelectedTeam(){
+
+    private void attachChildChangeListenerForSelectedTeam() {
         selectedTeam.getTeamDBRef(getString(R.string.db_teams)).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
@@ -425,7 +465,7 @@ public class TeamActivity extends AppCompatActivity
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                Log.d("FB_DATA_INCOMING","Received Data from DB");
+                Log.d("FB_DATA_INCOMING", "Received Data from DB");
             }
 
             @Override
@@ -445,18 +485,20 @@ public class TeamActivity extends AppCompatActivity
         });
     }
 
-    private void loadTeamFromDatabase(){
+    private void loadTeamFromDatabase() {
         users.clear();
+        userArrayAdapter.clear();
         selectedTeam.getTeamDBRef(getString(R.string.db_teams)).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 synchronized (selectedTeam) {
                     selectedTeam = dataSnapshot.getValue(Team.class);
                 }
-                Log.d(TAG,"loades selected Team from Database");
+                Log.d(TAG, "loades selected Team from Database");
                 refreshTeamContent();
                 attachNewElectedListenerOnSelectedTeam();
                 attachChildChangeListenerForSelectedTeam();
+                reveiceAllTeamMembersFromDBIntoUsersArray();
             }
 
             @Override
@@ -478,11 +520,24 @@ public class TeamActivity extends AppCompatActivity
 //        FirebaseAuth.getInstance().signOut();
     }
 
-    private void receiveUser(String UserUid){
-        usersRef.child(UserUid).addListenerForSingleValueEvent(new ValueEventListener() {
+    private void receiveUser(final String userUid) {
+        usersRef.child(userUid).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-
+                if (dataSnapshot.exists()) {
+                    Log.d(TAG, "User received form DB: " + dataSnapshot.child("name").getValue().toString());
+                    try {
+                        users.add(dataSnapshot.getValue(User.class));
+                        userArrayAdapter.notifyDataSetChanged();
+                        ListView userListView = (ListView) findViewById(R.id.teamMemberList);
+                        justifyListViewHightBAsedOnChildren(userListView);
+                    } catch (Exception e) {
+                        Log.d(TAG, e.getMessage());
+                    }
+                } else {
+                    Log.d(TAG, "User not found in DB");
+                }
+                usersRef.child(userUid).removeEventListener(this);
             }
 
             @Override
@@ -490,6 +545,44 @@ public class TeamActivity extends AppCompatActivity
 
             }
         });
+    }
+
+    private void attachUserListViewClickHandler() {
+
+        ListView userListView = (ListView) findViewById(R.id.teamMemberList);
+        userListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                User userClicked = userArrayAdapter.getItem(position);
+                selectedTeam.getTeamDBRef(getString(R.string.db_teams)).child(getString(R.string.db_team_currentElected)).setValue(userClicked.getUid());
+            }
+        });
+
+
+    }
+
+    private void justifyListViewHightBAsedOnChildren(ListView userListView) {
+        ListAdapter adapter = userListView.getAdapter();
+        ViewGroup vg = userListView;
+        int totalHeight = 0;
+        for (int i = 0; i<adapter.getCount();i++){
+            View listItem = adapter.getView(i,null,vg);
+            listItem.measure(0,0);
+            totalHeight += listItem.getMeasuredHeight();
+        }
+        ViewGroup.LayoutParams par = userListView.getLayoutParams();
+        par.height = totalHeight+(userListView.getDividerHeight()*(adapter.getCount()-1));
+        userListView.setLayoutParams(par);
+        userListView.requestLayout();
+    }
+
+    private void reveiceAllTeamMembersFromDBIntoUsersArray() {
+
+        Log.d(TAG, "called all TeamMemberUids form Team");
+        for (String userUid : selectedTeam.getTeamMembersUid()) {
+            receiveUser(userUid);
+        }
+
     }
 }
 
