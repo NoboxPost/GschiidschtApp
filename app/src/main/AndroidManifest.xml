@@ -21,7 +21,8 @@
             android:name=".TeamActivity"
             android:label="@string/title_activity_team"
             android:theme="@style/AppTheme" />
-        <activity android:name=".CreateTeamActivity"></activity>
+        <activity android:name=".CreateTeamActivity" />
+        <activity android:name=".InfoActivity"></activity>
     </application>
 
 </manifest>

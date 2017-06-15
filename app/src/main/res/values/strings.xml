@@ -11,7 +11,7 @@
     <string name="emailRepeatHint">Repeat email</string>
     <string name="passwordRepeatHint">Repeat password</string>
     <string name="missing_regsistration_name">Please insert a name!</string>
-    <string name="missing_regsistration_email">Please enter an vaild email adress</string>
+    <string name="missing_regsistration_email">Please enter an valid email adress</string>
     <string name="notequal_regsistration_email">Email adresses must be equal</string>
     <string name="missing_registration_password">Please enter a valid password</string>
     <string name="notequal_regsistration_password">Passwords must be equal</string>
@@ -38,7 +38,8 @@
     <string name="createTeamNameEmpty">Please enter a name</string>
     <string name="db_teams">teams</string>
     <string name="db_user_teams">teams</string>
-    <string name="teamTeamname" >Team Di Gschiidschtä</string>
+    <string name="teamTeamname">Team Di Gschiidschtä</string>
     <string name="teamCurrentElected">Nobody is elected</string>
     <string name="teamCurrentElectionButton">Elect Now!</string>
+    <string name="info">Information</string>
 </resources>

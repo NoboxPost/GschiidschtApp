@@ -16,4 +16,5 @@
     <string name="missing_regsistration_name">Bitte Namen eingeben</string>
     <string name="notequal_regsistration_email">E-Mail Adressen stimmen nicht überein!</string>
     <string name="logout">Abmelden</string>
+    <string name="info">Information</string>
 </resources>
