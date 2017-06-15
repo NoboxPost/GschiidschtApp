@@ -74,7 +74,7 @@ public class RegisterActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(),R.string.missing_regsistration_email,Toast.LENGTH_LONG).show();
             return;
         }
-        if (emailField.getText().equals(emailRepeatField.getText())){
+        if (!emailField.getText().toString().equals(emailRepeatField.getText().toString())){
             Toast.makeText(getApplicationContext(),R.string.notequal_regsistration_email,Toast.LENGTH_LONG).show();
             return;
         }
@@ -82,7 +82,7 @@ public class RegisterActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(),R.string.missing_registration_password,Toast.LENGTH_LONG).show();
             return;
         }
-        if (emailField.getText().equals(emailRepeatField.getText())){
+        if (!passwordRepeatField.getText().toString().equals(passwordField.getText().toString())){
             Toast.makeText(getApplicationContext(),R.string.notequal_regsistration_password,Toast.LENGTH_LONG).show();
             return;
         }
