@@ -222,7 +222,7 @@ public class TeamActivity extends AppCompatActivity
             startActivity(createTeamIntent);
         } else if (item.getGroupId() == R.id.teamGroup) {
             selectedTeam = teams.get(item.getItemId());
-            refreshTeamContent();
+            loadTeamFromDatabase();
         }
         if (id == R.id.nav_settings) {
             //TODO: INTENT To SEttings Acitivity;
@@ -257,27 +257,37 @@ public class TeamActivity extends AppCompatActivity
             }
 
 
-            selectedTeam.getTeamDBRef().child("currentElected").addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    loadTeamFromDatabase();
-                }
 
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
 
-                }
-            });
         }
     }
+
+    private void attachNewElectedListenerOnSelectedTeam() {
+        DatabaseReference selectedTeamDBRef = selectedTeam.getTeamDBRef(getString(R.string.db_teams)).child("currentElected");
+        selectedTeamDBRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.d(TAG,"refreshedTeam "+selectedTeam.getTeamName()+" got new elected: "+dataSnapshot.toString());
+                refreshTeamContent();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
     private void loadTeamFromDatabase(){
-        selectedTeam.getTeamDBRef().addListenerForSingleValueEvent(new ValueEventListener() {
+        selectedTeam.getTeamDBRef(getString(R.string.db_teams)).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 synchronized (selectedTeam) {
                     selectedTeam = dataSnapshot.getValue(Team.class);
                 }
+                Log.d(TAG,"loades selected Team from Database");
                 refreshTeamContent();
+                attachNewElectedListenerOnSelectedTeam();
             }
 
             @Override

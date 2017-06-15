@@ -35,8 +35,8 @@ public class Team implements Serializable{
         this.teamMembersUid.add(uidOfFounder);
     }
 
-    public DatabaseReference getTeamDBRef(){
-        return FirebaseDatabase.getInstance().getReference("teams").child(teamId);
+    public DatabaseReference getTeamDBRef(String dbTeamsReferenceName){
+        return FirebaseDatabase.getInstance().getReference(dbTeamsReferenceName).child(teamId);
     }
 
     public void addUser(String userUid){
