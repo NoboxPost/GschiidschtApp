@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Dr Gschiidscht</string>
+    <string name="passwordHint">Passwort</string>
+    <string name="usernameHint">Benutzernamen</string>
+    <string name="loginButton">Anmelden</string>
+    <string name="emailHint">Email</string>
+    <string name="registerButton">Registrieren</string>
+    <string name="app_sneekyname">Dr Dümmscht</string>
+    <string name="found_easterEgg">Gefunden!</string>
+    <string name="emailRepeatHint">Email wiederholen</string>
+    <string name="passwordRepeatHint">Passwort wiederholen</string>
+    <string name="notequal_regsistration_password" >Passwörter stimmen nicht überein!</string>
+    <string name="missing_registration_password">Bitte Passwort eingeben!</string>
+    <string name="missing_regsistration_email">Bitte gültige E-Mail Adresse eingeben!</string>
+    <string name="missing_regsistration_name">Bitte Namen eingeben</string>
+    <string name="notequal_regsistration_email">E-Mail Adressen stimmen nicht überein!</string>
+    <string name="logout">Abmelden</string>
+</resources>

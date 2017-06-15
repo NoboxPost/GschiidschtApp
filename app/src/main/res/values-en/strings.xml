@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Dr Gschiidscht</string>
+    <string name="passwordHint">Password</string>
+    <string name="usernameHint">Username</string>
+    <string name="loginButton">Login</string>
+    <string name="emailHint">Email</string>
+    <string name="registerButton">Sign Up</string>
+    <string name="app_sneekyname">Dr Dümmscht</string>
+    <string name="found_easterEgg">Found it!</string>
+    <string name="emailRepeatHint">Repeat email</string>
+    <string name="passwordRepeatHint">Repeat password</string>
+    <string name="notequal_regsistration_password" >Passwords must be equal</string>
+    <string name="missing_registration_password">Please enter a valid password</string>
+    <string name="missing_regsistration_email">Please enter an vaild email adress</string>
+    <string name="missing_regsistration_name">Please insert a name!</string>
+    <string name="notequal_regsistration_email">Email adresses must be equal</string>
+    <string name="logout">Sign out</string>
+</resources>

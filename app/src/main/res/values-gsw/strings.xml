@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="loginButton">Amäudä</string>
+    <string name="passwordHint">Passwort</string>
+    <string name="usernameHint">Bernutzernamä</string>
+    <string name="emailHint">Email</string>
+    <string name="registerButton">Regischtriärä</string>
+    <string name="app_name">Dr Gschiidscht</string>
+    <string name="app_sneekyname">Dr Dümmscht</string>
+    <string name="found_easterEgg">Dr Dümmst, ändlech gfundä!</string>
+    <string name="emailRepeatHint">Email widerholä</string>
+    <string name="passwordRepeatHint">Passwort widerholä</string>
+    <string name="notequal_regsistration_password" >D Passwörer stimme nid überi!</string>
+    <string name="missing_registration_password">Gib es güutigs Passwort i!</string>
+    <string name="missing_regsistration_email">Gib e güutigi E-Mail Adrässe i!</string>
+    <string name="missing_regsistration_name">Gib e güutige Name i!</string>
+    <string name="notequal_regsistration_email">D E-Mail Adrässe stimme nid überi!</string>
+    <string name="logout">Abmäude</string>
+</resources>
