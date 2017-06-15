@@ -3,6 +3,7 @@ package net.ictcampus.gschiidschtapp;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
@@ -29,6 +30,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import net.ictcampus.gschiidschtapp.model.Team;
+import net.ictcampus.gschiidschtapp.model.User;
 
 import org.w3c.dom.Text;
 
@@ -39,7 +41,9 @@ public class TeamActivity extends AppCompatActivity
 
     private final String TAG = "TeamActivity";
     private ArrayList<Team> teams = new ArrayList<>();
+    private ArrayList<User> users = new ArrayList<>();
     private Team selectedTeam;
+    private DatabaseReference usersRef;
 
 
     @Override
@@ -141,6 +145,7 @@ public class TeamActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
+        usersRef = FirebaseDatabase.getInstance().getReference(getString(R.string.db_users));
         loadAndDisplayUsernameAndUserEmailInNavMenu();
         addAllTeamsWithUserAsNavLinks();
 
@@ -268,7 +273,36 @@ public class TeamActivity extends AppCompatActivity
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Log.d(TAG,"refreshedTeam "+selectedTeam.getTeamName()+" got new elected: "+dataSnapshot.toString());
+                loadTeamFromDatabase();
                 refreshTeamContent();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+    private void attachChildChangeListenerForSelectedTeam(){
+        selectedTeam.getTeamDBRef(getString(R.string.db_teams)).addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                Log.d("FB_DATA_INCOMING","Received Data from DB");
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
             }
 
             @Override
@@ -279,6 +313,7 @@ public class TeamActivity extends AppCompatActivity
     }
 
     private void loadTeamFromDatabase(){
+        users.clear();
         selectedTeam.getTeamDBRef(getString(R.string.db_teams)).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -288,6 +323,7 @@ public class TeamActivity extends AppCompatActivity
                 Log.d(TAG,"loades selected Team from Database");
                 refreshTeamContent();
                 attachNewElectedListenerOnSelectedTeam();
+                attachChildChangeListenerForSelectedTeam();
             }
 
             @Override
@@ -308,4 +344,20 @@ public class TeamActivity extends AppCompatActivity
         super.onStop();
 //        FirebaseAuth.getInstance().signOut();
     }
+
+    private void receiveUser(String UserUid){
+        usersRef.child(UserUid).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
 }
+
+
