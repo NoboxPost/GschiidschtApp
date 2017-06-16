@@ -11,7 +11,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -20,6 +19,11 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
+/**
+ * RegisterActivity (accessible via MainActivity) is the screen where a new user can register to create himself a new user.
+ * It is a connection to Firebase Authentication.
+ */
 
 public class RegisterActivity extends AppCompatActivity {
     private final String TAG = "RegisterActivity";
@@ -139,7 +143,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     }
 
-
+    //changes only the title in the toolbar
     private void checkAndHandleEasterEgg() {
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar_main));
         final SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.shared_preference_file_key), getApplication().MODE_PRIVATE);

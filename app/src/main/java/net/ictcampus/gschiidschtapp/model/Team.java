@@ -12,7 +12,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
- * Created by vanonir on 09.06.2017.
+ * A Team Object is a collection of different users such as admins and members.
+ * Also it knows which member got how many times elected.
+ * Team is like a database-mirror for better programming-usage.
  */
 
 public class Team implements Serializable{
