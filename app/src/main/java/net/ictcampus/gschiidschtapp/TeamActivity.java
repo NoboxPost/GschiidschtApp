@@ -56,6 +56,22 @@ import net.ictcampus.gschiidschtapp.model.User;
 
 import java.util.ArrayList;
 
+/**
+ * TeamActivity is where the magic happens. It is the main screen and includes:
+ *      - team-overview:
+ *          - team-name
+ *          - user-name that got elected (Gschiidscht)
+ *          - list of users in that team
+ *          - graphical overviews of the past votes
+ *
+ *      - drawer-menu:
+ *          - different links (create team, information)
+ *          - sign off & shut down
+ */
+
+
+//TODO: Swap parts of this huge class to small independent parts
+
 public class TeamActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -74,10 +90,12 @@ public class TeamActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_team);
+
+        //toolbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-
+        //drawer menu
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -86,20 +104,18 @@ public class TeamActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
         //end intent if no user is logged in
         if (FirebaseAuth.getInstance().getCurrentUser() == null) {
             finish();
         }
         //addAllTeamsContainingUserAsNavLinks();
-
-
         userArrayAdapter = new ArrayAdapter<User>(this, android.R.layout.simple_list_item_1,users);
 
+        //userlist
         ListView userListView = (ListView) findViewById(R.id.teamMemberList);
         userListView.setAdapter(userArrayAdapter);
         attachUserListViewClickHandler();
-
-//        Toast.makeText(getApplicationContext(),FirebaseAuth.getInstance().getCurrentUser().getDisplayName(),Toast.LENGTH_LONG).show();
 
     }
 
@@ -158,6 +174,7 @@ public class TeamActivity extends AppCompatActivity
         }
     }
 
+    //adds the different teams a user is in to the drawer menu
     private void addTeamsToNav() {
         if (!teams.isEmpty()) {
             //get submenu to add all teams;
@@ -252,7 +269,7 @@ public class TeamActivity extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
+        // Handle navigation view (drawer menu) item clicks here.
         int id = item.getItemId();
 
         if (id == R.id.createTeam) {
@@ -285,6 +302,7 @@ public class TeamActivity extends AppCompatActivity
         return true;
     }
 
+    //content-load-in
     private void refreshTeamContent() {
         if (selectedTeam != null) {
             TextView teamName = (TextView) findViewById(R.id.teamTeamname);
@@ -315,6 +333,7 @@ public class TeamActivity extends AppCompatActivity
         }
     }
 
+    //creation of a bar-chart; not yet database connect, just a demo version
     private void createOverallGraph() {
 
         overallChart = (HorizontalBarChart) findViewById(R.id.overall_graph);
@@ -369,7 +388,7 @@ public class TeamActivity extends AppCompatActivity
 
     }
 
-
+    //creation of a line-chart; not yet database connect, just a demo version
     private void createLastSixMonthsGraph() {
         lastSixMonthsChart = (LineChart) findViewById(R.id.last_six_months_graph);
         lastSixMonthsChart.setScaleEnabled(false);

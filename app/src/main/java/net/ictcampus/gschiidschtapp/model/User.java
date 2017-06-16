@@ -4,7 +4,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
- * Created by vanonir on 09.06.2017.
+ * A User Object is a collection of different user-attributes, among others, in which teams he has member-status.
+ * User is like a database-mirror for better programming-usage.
  */
 
 public class User implements Serializable {

@@ -13,8 +13,14 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
-
 import java.util.ArrayList;
+
+/**
+ * InfoActivity is an information screen about the mobbing-topic. (accessible via drawer menu)
+ * It includes a list of links to websites.
+ */
+
+//TODO: there should be different links for each language
 
 public class InfoActivity extends AppCompatActivity {
 
@@ -71,6 +77,7 @@ public class InfoActivity extends AppCompatActivity {
         });
     }
 
+    //changes only the title in the toolbar
     private void checkAndHandleEasterEgg() {
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar_main));
         final SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.shared_preference_file_key), getApplication().MODE_PRIVATE);

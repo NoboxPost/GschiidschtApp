@@ -19,6 +19,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
+/**
+ * MainActivity is the first screen. It is only displayed, when the user is not signed in.
+ * MainActivity provides the registration (the link to RegisterActivity) and the login (full sign-in-form, NOT a link).
+ */
+
 public class MainActivity extends AppCompatActivity {
 
     private final String TAG = "MainActivity";
@@ -110,6 +115,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    //changes only the title in the toolbar
     private void checkAndHandleEasterEgg() {
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar_main));
         final SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.shared_preference_file_key), getApplication().MODE_PRIVATE);

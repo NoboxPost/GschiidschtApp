@@ -24,6 +24,13 @@ import net.ictcampus.gschiidschtapp.model.Team;
 
 import java.util.ArrayList;
 
+/**
+ * CreateTeamActivity is the screen that a user sees, when he wants to establish a new team. (accessible via drawer menu)
+ * Also it handles the database-entries:
+ *      1. add a team to the database
+ *      2. add the creator-user to the team
+ */
+
 public class CreateTeamActivity extends AppCompatActivity {
 
     private final String TAG = "CreateTeamActivity";
@@ -94,6 +101,7 @@ public class CreateTeamActivity extends AppCompatActivity {
     }
 
 
+    //changes only the title in the toolbar
     private void checkAndHandleEasterEgg() {
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar_main));
         final SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.shared_preference_file_key), getApplication().MODE_PRIVATE);
